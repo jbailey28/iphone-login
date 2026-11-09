@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+# Fake Google keys, so the local Supabase can switch Google sign-in on. They
+# match nothing at Google. Real ones are per app and never committed.
+env:
+  SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID: test-only.apps.googleusercontent.com
+  SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET: test-only-not-a-secret
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Start a throwaway Supabase
+        run: npx supabase start -x realtime,storage-api,imgproxy,studio,edge-runtime,logflare,vector,supavisor,postgres-meta
+      - run: npx supabase status -o json > .supabase-status.json
+      - run: npm run typecheck
+      - run: npm test
