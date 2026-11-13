@@ -1,19 +1,261 @@
 # iPhone Login
 
-Login for a new iPhone app: email and password (with forgot password and create
-account), Apple, and Google, on Supabase. It comes with the sign-in pages, ready
-to use.
+I built iPhone Login so I'd have a ready-made sign-in for my iPhone apps.
+
+The iPhone Login is part of my component library that I name Clio
+https://github.com/jbailey28/clio. I made the library so I wouldn't keep
+rebuilding the same things for every project. It also gives my work more
+structure. You can find more on why I built it here.
+https://jessykabailey.com/clio-my-personal-component-library/
 
 <!-- Walkthrough video goes here. -->
 
-> **Status:** every part is tested on GitHub, and the security was tested by an
-> independent red team (see `FINDINGS.md`). It has **not** been tested yet on a
-> real iPhone or with a real (hosted) Supabase project. `GOING-LIVE.md` lists what
-> to check before real users sign in.
+## What you get
+
+iPhone Login lets the people using your app:
+
+- **Create an account** with their email and a password. They get an email with
+  a link to confirm it.
+- **Log in** with their email and password.
+- **Reset a forgotten password.** They get an email with a link to choose a new
+  one.
+- **Log in with Google or Apple** instead of typing a password.
+- **Stay logged in** after they close the app.
+
+Here's what the pages look like.
+
+<table>
+<tr>
+<td align="center"><img src="images/signin.png" alt="Sign in page" width="220"><br>Sign in</td>
+<td align="center"><img src="images/password.png" alt="Enter password page" width="220"><br>Enter password</td>
+<td align="center"><img src="images/create-account.png" alt="Create an account page" width="220"><br>Create an account</td>
+</tr>
+<tr>
+<td align="center"><img src="images/forgot-password.png" alt="Forgot password page" width="220"><br>Forgot password</td>
+<td align="center"><img src="images/choose-password.png" alt="Choose a new password page" width="220"><br>Choose a new password</td>
+<td></td>
+</tr>
+</table>
+
+Not shown: "Check your email," which appears after the app sends an email. I
+took these screenshots before connecting the app to Supabase, so it couldn't
+send an email yet.
+
+It comes with:
+
+- **The four emails** your users get: confirm your email, reset your password,
+  your password was changed, and your email was changed.
+- **The code that connects it all to Supabase.** If you haven't used Supabase
+  before, it's an online service that stores your users' accounts. Its free
+  plan lets you have up to two projects.
+- **Security testing.** A separate tester tried to break it against 21 security
+  rules. The rules are in `SECURITY-REQUIREMENTS.md`, and you can find the
+  results in `FINDINGS.md`. You might want to run your own tests too.
+
+It doesn't include:
+
+- **The rest of your app.** After someone logs in, your app shows its own pages.
+- **The two web pages the email links open.** You make those on your own
+  website. See "What you need" below.
+
+> **Status:** It passes all of its automatic tests and the separate security
+> test. It hasn't been tried yet on a real iPhone or with a real Supabase
+> account. `GOING-LIVE.md` lists what to check before real people use it.
+
+## What you need
+
+You don't need my component library to use iPhone Login. The library just
+makes my own projects easier. Here's what you do need.
+
+**To try it out**
+
+If you did my setup walkthrough (jessykabailey.com/my-setup/), you already
+have Claude Code and Homebrew. The one new thing to install is Node.
+
+| What | Why | Cost |
+|---|---|---|
+| **Claude Code** | It copies iPhone Login into your app and connects it for you. You installed it in the setup walkthrough. | Included with Claude's paid plans |
+| **Homebrew** | It's the easiest way to install Node. You installed it in the setup walkthrough. | Free |
+| **Node** (new) | Node is a free program that lets your computer run apps written in JavaScript, the language iPhone Login is written in. Expo needs it to build your app and start it on your phone. To install it, open Terminal and type `brew install node`, or ask Claude Code to install it. | Free |
+| **Expo** | Expo is a free set of tools for making iPhone apps. You build the app on your computer, and Expo lets you try it on your phone while you work. iPhone Login is built for apps made with Expo. If you don't have an app yet, Claude Code can make one for you. | Free |
+| **A Supabase account** | Supabase stores your users' accounts. | Free plan works |
+| **The Expo Go app on your iPhone** | It lets you try your app on your phone while you build it. | Free, from the App Store |
+
+**Before real people use it**
+
+| What | Why | Cost |
+|---|---|---|
+| **Your own website**, with two pages: "Email confirmed" and "Set a new password" | The links in the emails open these pages. | A web address costs about $10–20 a year |
+| **An email sending service**, for example Resend | Supabase's own email only sends a few emails an hour. It's only for testing. | Free for small apps |
+| **An Apple Developer account** | You need it to put your app in the App Store, and to use Continue with Apple for real. | $99 a year |
+| **A Google Cloud account** | Continue with Google needs a sign-in key from Google. | Free |
+| **A Cloudflare account** | It adds an "Are you a person?" check to sign-up. That stops fake sign-ups made by computer programs. | Free |
+
+`GOING-LIVE.md` has the full list.
 
 ## How to add it to your app
 
-For an Expo app:
+Do these in order. Each step needs the one before it.
+
+### Step 1: Install Node
+
+Open Terminal and type:
+
+```
+brew install node
+```
+
+When it's done, type `node --version`. If you see a number, like `v24.11.0`,
+Node is installed.
+
+### Step 2: Get Expo Go on your iPhone
+
+Open the App Store on your iPhone, search for **Expo Go**, and install it. It's
+free. This is how you'll try your app on your phone.
+
+### Step 3: Make your app
+
+Skip this step if you already have an app made with Expo.
+
+1. Make a new, empty folder for your app, for example on your Desktop.
+2. Open that folder in Claude Code, and send this message:
+   ```
+   Make a new Expo app in this folder, then start it so I can open it in Expo Go.
+   ```
+3. Claude shows a square barcode (a QR code). Point your iPhone's camera at it.
+   Your app opens in Expo Go. Your phone and your computer need to be on the
+   same Wi-Fi.
+
+You now have a blank app on your phone. Next, you'll give it a place to keep
+your users' accounts.
+
+### Step 4: Make a Supabase account and project
+
+1. Go to supabase.com and sign up. It's free.
+2. Make a new project. Give it a name, like your app's name.
+3. Supabase asks for a database password. Save it somewhere safe, like your
+   password manager. You won't need it for this walkthrough.
+4. Wait a minute or two while Supabase sets up the project.
+
+### Step 5: Add iPhone Login to your app
+
+In Claude Code, in your app's folder, send this message:
+
+```
+Add iPhone Login to my app from https://github.com/jbailey28/iphone-login.
+Follow the "For developers" part of its README.
+```
+
+Claude copies iPhone Login into your app and connects the sign-in pages. Then
+it asks you for two things from your Supabase project. It tells you where to
+find them:
+
+- **The project's web address.** It looks like `https://abcd1234.supabase.co`.
+- **The publishable key.** It's a long code that's safe to put in an app. Never
+  share the key called "secret."
+
+Paste them into Claude Code when it asks.
+
+### Step 6: Set the rules in Supabase
+
+These settings are the rules for your users' accounts. They live in Supabase,
+so nobody can get around them by skipping your app.
+
+Open your project on supabase.com and click **Authentication** in the left
+menu.
+
+**Sign In / Providers**
+
+Under **User Signups**:
+
+- Allow new users to sign up: **on**
+- Confirm email: **on**. People have to tap the link in their email before they
+  can log in.
+
+<img src="images/supabase-user-signups.png" alt="Supabase's Sign In / Providers page, with Allow new users to sign up and Confirm email switched on" width="700">
+
+Then click **Email** in the list below it:
+
+- Secure email change: **on**. To change their email, people confirm both the
+  old address and the new one.
+- Secure password change: **on**. People must have logged in recently to change
+  their password.
+- Minimum password length: **10**
+- Password requirements: **Lowercase, uppercase letters, digits and symbols**
+- Enable magic links and email OTP: **off**. This switch lets people log in
+  with only an emailed link and no password. iPhone Login doesn't use it, so
+  turn it off.
+- Email OTP expiration: **900**. This is how long the email links work, in
+  seconds. 900 seconds is 15 minutes.
+
+This is how the Email panel looks before you change anything. Click **Save**
+at the bottom when you're done.
+
+<img src="images/supabase-email-1.png" alt="The top of Supabase's Email panel, before any changes" width="560">
+
+<img src="images/supabase-email-2.png" alt="The bottom of Supabase's Email panel, before any changes" width="560">
+
+**URL Configuration**
+
+- Site URL: your website's address, for example `https://your-site.com`
+- Redirect URLs: these are the addresses Supabase is allowed to send people to.
+  Click **Add URL** and add all three:
+  - `https://your-site.com/auth/confirm`
+  - `https://your-site.com/auth/reset`
+  - your app's address for Google sign-in. Claude will tell you what it is.
+
+This is how it looks before you add anything:
+
+<img src="images/supabase-url-configuration.png" alt="Supabase's URL Configuration page, with Site URL and Redirect URLs" width="700">
+
+**Emails → Templates**
+
+These are the emails your users get. For each one below, open it, change the
+subject, then replace the message with the matching file. The files are on
+this GitHub page, in the `supabase/templates` folder.
+
+<img src="images/supabase-email-templates.png" alt="Supabase's list of email templates" width="700">
+
+| Email | Subject | File |
+|---|---|---|
+| Confirm sign up | Confirm your email | `confirmation.html` |
+| Reset password | Reset your password | `recovery.html` |
+
+Further down, under **Security**, switch these two on. Then open each one and
+do the same:
+
+<img src="images/supabase-security-emails.png" alt="The Password changed and Email address changed emails, switched off" width="700">
+
+| Email | Subject | File |
+|---|---|---|
+| Password changed | Your password was changed | `password_changed.html` |
+| Email address changed | Your email address was changed | `email_changed.html` |
+
+Use these files, not the emails Supabase starts with. The links in these files
+are made to open your app's pages.
+
+### Step 7: Try it on your phone
+
+Ask Claude Code to start your app, and scan the QR code again. You'll see the
+sign-in pages in your app.
+
+### Before real people use it
+
+- **Continue with Apple and Continue with Google.** Both are under
+  **Sign In / Providers** in Supabase. Each one needs details from Apple or
+  Google before you can turn it on. Ask Claude to walk you through it.
+- **Your email sending service.** Connect it under **Emails → SMTP Settings**
+  in Supabase.
+- **The two web pages** on your website that the email links open.
+
+`GOING-LIVE.md` has the full list.
+
+## For developers
+
+You can skip this part. It's for people who want to add iPhone Login by hand,
+or change its code.
+
+### Adding it by hand
 
 1. Download this repository (**Code → Download ZIP**) and copy the `src` and `ui`
    folders into your app, for example as `login/src` and `login/ui`.
@@ -75,158 +317,61 @@ For an Expo app:
      );
    }
    ```
-4. Set up your Supabase project. Open your project on supabase.com and click
-   **Authentication** in the left menu.
+4. Set up Supabase as in Step 6 above. `supabase/config.toml` holds the same
+   settings for a local Supabase.
 
-   **Sign In / Providers**
+### How the email links open
 
-   Under **User Signups**:
-   - Allow new users to sign up: **on**
-   - Confirm email: **on**
+For now, the links in the emails open two pages on your website. Once the app
+has an Apple Developer account, the same links can open the app directly
+(Apple calls this Universal Links). `GOING-LIVE.md` lists what that needs.
 
-   Then click **Email** in the list of providers:
-   - Secure email change: **on**
-   - Secure password change: **on**
-   - Minimum password length: **10**
-   - Password requirements: **Lowercase, uppercase letters, digits and symbols**
-   - Email OTP expiration: **900** (seconds, so links stop working after 15 minutes)
+### What's in the folder
 
-   **URL Configuration**
-   - Site URL: your website, for example `https://your-site.com`
-   - Redirect URLs: click **Add URL** and add all three:
-     - `https://your-site.com/auth/confirm`
-     - `https://your-site.com/auth/reset`
-     - your app's Google return address, for example `yourapp://auth/google`
+- `SECURITY-REQUIREMENTS.md`: the 21 things login must never allow. Written
+  before any code, on 2026-11-07.
+- `GOING-LIVE.md`: what each app has to fill in or set up before real use.
+- `FINDINGS.md`: what the security tester found, and what was decided.
+- `src/emailLogin.ts`: email and password login, sign-up, forgot password, log
+  out.
+- `src/appleLogin.ts`: Continue with Apple.
+- `src/googleLogin.ts`: Continue with Google, through Google's own sign-in page.
+- `src/secureStorage.ts`: keeps the login in the iPhone's secure storage (the
+  Keychain), split into pieces small enough to fit.
+- `ui/`: the sign-in pages, and `LoginFlow`, which shows them in order.
+- `supabase/config.toml` and `supabase/templates/`: the Supabase settings and
+  the emails.
+- `tests/`: the builder's tests. `tests/ui/` clicks through the pages.
+- `.devcontainer/`: the setup for running the tests in a GitHub codespace.
 
-   **Emails → Templates**
+### Running the tests
 
-   Open each one, set the subject, and paste in the file from `supabase/templates/`:
-
-   | Template | Subject | File |
-   |---|---|---|
-   | Confirm sign up | Confirm your email | `confirmation.html` |
-   | Reset password | Reset your password | `recovery.html` |
-
-   Under **Security**, switch these two on, then open each one the same way:
-
-   | Template | Subject | File |
-   |---|---|---|
-   | Password changed | Your password was changed | `password_changed.html` |
-   | Email address changed | Your email address was changed | `email_changed.html` |
-
-   Use these files, not Supabase's built-in emails. The links in them are made
-   to open your app's pages.
-
-   **Sign In / Providers → Apple and Google**
-
-   Turn both on. Apple needs your app's bundle ID. Google needs a client ID and
-   secret from Google Cloud. `GOING-LIVE.md` walks through both.
-
-   **Before real users:** Supabase's built-in email service has low sending
-   limits and isn't meant for live apps. Set up your own email sender under
-   **Emails → SMTP Settings**. The rest of the launch checks are in
-   `GOING-LIVE.md`.
-
-## What you need
-
-Read this first when using the component in a new app, and say which items are
-missing. `GOING-LIVE.md` has the full before-launch list.
-
-**To use it at all**
-
-| Requirement | Why | Cost |
-|---|---|---|
-| A **Supabase account** and a project | The login runs on it | Free plan works |
-| An app written in **JavaScript or TypeScript** (Expo, React Native, or a website) | The component is TypeScript and uses Supabase's JavaScript library | Free |
-| A **website with `https://`** for two link pages: "Email confirmed" and "Set a new password" | Email links have to open somewhere | A domain, about $10–20 a year |
-| An **email sender** (for example Resend) connected to Supabase | Supabase's built-in sender is only for testing | Free plan for small apps |
-| **React Native** (Expo is the easiest way to get it), for the sign-in pages | The pages in `ui/` are phone-app pages. A website can use the login code in `src/` and make its own pages | Free |
-
-**For an iPhone app**
-
-| Requirement | Why | Cost |
-|---|---|---|
-| An **Apple Developer account** | Universal Links, Apple sign-in, and the App Store | $99 a year |
-| A **safe place on the phone to keep the login** (the iOS Keychain) | So people stay logged in safely | Free. Included: `src/secureStorage.ts`. The app installs `expo-secure-store` |
-
-**For Google sign-in**: a Google Cloud project with sign-in keys. Free.
-
-**Before launch**: a Cloudflare account for the robot check (free), and the rest
-of `GOING-LIVE.md`.
-
-**To run the tests**: Node 22 and Docker, or a GitHub account to run them on
-GitHub Actions or in a codespace. Free for normal use.
-
-## Installing
+Install with:
 
 ```
 npm install --legacy-peer-deps
 ```
 
-The flag works around a bug in npm's installer with this version of the test
-tool. (It's also in `.npmrc`, which the component library leaves out of copies.)
+The extra flag works around a bug in npm with this version of the test tool.
 
-## Running the tests
+`scripts/test-in-codespace.sh` runs every test in a GitHub codespace, not on
+your computer. The tests also run on GitHub Actions every time the code
+changes. You need Node 22 and Docker, or a GitHub account.
 
-`scripts/test-in-codespace.sh` runs every test in a GitHub codespace, never on
-this computer. It tests the folder it's run from, exactly as it is. The tests
-also run on GitHub Actions on every push.
+### How it's tested
 
-## The plan (updated 2026-11-08)
-
-- **Create an account:** email and password, then a **"Confirm your email"
-  link**, then log in. The account can't be used before the link is clicked.
-- **Forgot password:** a **"Reset password" link**, then a page to set a new
-  password, then log in with it.
-- **Links open the app through Apple's Universal Links. That's the final
-  version.** It switches on once the app has an Apple Developer account. Until
-  then the same links open two small web pages.
-- **No real addresses or accounts are built in.** Each app fills in its own
-  website, link name and Apple details. `GOING-LIVE.md` lists what's needed and
-  what breaks without it.
-
-## Built so far
-
-**Email and password, with links** (log in, create an account with a "Confirm
-your email" link, forgot password with a "Reset your password" link, log out).
-**Continue with Apple** (native, with a nonce) and **Continue with Google**
-(Google's own sign-in page, with PKCE). `GOING-LIVE.md` says what each app sets
-up before launch. **The sign-in pages** (2026-11-09), tested by clicking through
-them in a pretend browser. 56 builder tests pass on GitHub Actions.
-
-- `SECURITY-REQUIREMENTS.md`: the 21 things login must never allow. Written
-  before any code, on 2026-11-07. 5–8 changed to links on 2026-11-08.
-- `GOING-LIVE.md`: what each app has to fill in or set up before real use.
-- `FINDINGS.md`: what the red team found, and what was decided.
-- `src/emailLogin.ts`: the login functions an app calls.
-- `src/appleLogin.ts`: "Continue with Apple" on an iPhone.
-- `src/googleLogin.ts`: "Continue with Google", through Google's sign-in page.
-- `src/secureStorage.ts`: keeps the login in the iPhone Keychain, split into
-  pieces small enough to fit.
-- `ui/`: the sign-in pages, and `LoginFlow`, which shows them in order.
-- `supabase/config.toml` and `supabase/templates/`: the Supabase login settings
-  and the emails.
-- `tests/`: the builder's tests. `tests/ui/` clicks through the pages. They check it does what it's for. They are not
-  the red team test.
-- `.devcontainer/`: the codespace setup. Node 22, and Docker so Supabase can run
-  inside the codespace.
-
-## How it's tested
-
-- It's built with Opus.
-- It's red-team tested with Fable, in a separate, fresh codespace that holds only
-  this code and the security requirements.
+- It was built with Claude Opus.
+- It was security-tested with Claude Fable, in a separate, fresh codespace that
+  held only this code and the security requirements.
 - Supabase runs inside the codespace and is thrown away after each run. No real
-  Supabase project is used, so no access token is needed.
-- The final proof runs on GitHub Actions on every change.
+  Supabase project is used.
+- The final check runs on GitHub Actions on every change.
 
-## What never goes in this repository
+### What never goes in this repository
 
-- Builder notes. The red team tester must see only the code and the
-  requirements. `tests/`, `FINDINGS.md` and the git history are left out of every
-  red team snapshot.
-- Keys, tokens, or `.env` files.
+- Builder notes. The security tester sees only the code and the requirements.
+- Keys, passwords, or `.env` files.
 
 ## License
 
-MIT. See `LICENSE`.
+MIT. Anyone can use, copy and change it for free. See `LICENSE`.
