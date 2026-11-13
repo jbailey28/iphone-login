@@ -75,8 +75,57 @@ For an Expo app:
      );
    }
    ```
-4. Copy `supabase/config.toml` and `supabase/templates/` into your Supabase
-   project's settings, then work through `GOING-LIVE.md`.
+4. Set up your Supabase project. Open your project on supabase.com and click
+   **Authentication** in the left menu.
+
+   **Sign In / Providers**
+
+   Under **User Signups**:
+   - Allow new users to sign up: **on**
+   - Confirm email: **on**
+
+   Then click **Email** in the list of providers:
+   - Secure email change: **on**
+   - Secure password change: **on**
+   - Minimum password length: **10**
+   - Password requirements: **Lowercase, uppercase letters, digits and symbols**
+   - Email OTP expiration: **900** (seconds, so links stop working after 15 minutes)
+
+   **URL Configuration**
+   - Site URL: your website, for example `https://your-site.com`
+   - Redirect URLs: click **Add URL** and add all three:
+     - `https://your-site.com/auth/confirm`
+     - `https://your-site.com/auth/reset`
+     - your app's Google return address, for example `yourapp://auth/google`
+
+   **Emails → Templates**
+
+   Open each one, set the subject, and paste in the file from `supabase/templates/`:
+
+   | Template | Subject | File |
+   |---|---|---|
+   | Confirm sign up | Confirm your email | `confirmation.html` |
+   | Reset password | Reset your password | `recovery.html` |
+
+   Under **Security**, switch these two on, then open each one the same way:
+
+   | Template | Subject | File |
+   |---|---|---|
+   | Password changed | Your password was changed | `password_changed.html` |
+   | Email address changed | Your email address was changed | `email_changed.html` |
+
+   Use these files, not Supabase's built-in emails. The links in them are made
+   to open your app's pages.
+
+   **Sign In / Providers → Apple and Google**
+
+   Turn both on. Apple needs your app's bundle ID. Google needs a client ID and
+   secret from Google Cloud. `GOING-LIVE.md` walks through both.
+
+   **Before real users:** Supabase's built-in email service has low sending
+   limits and isn't meant for live apps. Set up your own email sender under
+   **Emails → SMTP Settings**. The rest of the launch checks are in
+   `GOING-LIVE.md`.
 
 ## What you need
 
