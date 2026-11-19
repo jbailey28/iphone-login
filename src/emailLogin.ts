@@ -37,7 +37,17 @@ export const MESSAGES = {
     'Password needs to be at least 10 characters with one uppercase letter, one lowercase letter, one number and one special character (like ! @ # or $).',
   passwordChanged: 'Your password was changed. Log in with your new password.',
   somethingWrong: 'Something went wrong. Try again.',
+  badEmail: 'Enter a valid email address.',
 } as const;
+
+/**
+ * Whether the text has the shape of an email address: a name, one @, and a
+ * domain ending in a dot and at least two letters ("xyz@gmail" fails). It can't
+ * tell whether the address exists; only the confirm link proves that.
+ */
+export function looksLikeEmail(text: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@.]{2,}$/.test(text.trim());
+}
 
 export type EmailLoginOptions = {
   /** The page a "Confirm your email" link opens. Must be on Supabase's allowed list (13). */

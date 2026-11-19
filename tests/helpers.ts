@@ -1,4 +1,6 @@
 import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 
@@ -10,9 +12,10 @@ import { createClient } from '@supabase/supabase-js';
  */
 function status(): Record<string, string> {
   try {
-    return JSON.parse(readFileSync(new URL('../.supabase-status.json', import.meta.url), 'utf8'));
-  } catch {
-    throw new Error('No .supabase-status.json. Run `npx supabase start` then `npx supabase status -o json > .supabase-status.json`.');
+    // A plain file path, not a URL: the pretend browser's URL can't be used to read files.
+    return JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', '.supabase-status.json'), 'utf8'));
+  } catch (cause) {
+    throw new Error('No .supabase-status.json. Run `npx supabase start` then `npx supabase status -o json > .supabase-status.json`.', { cause });
   }
 }
 

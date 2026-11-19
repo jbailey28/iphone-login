@@ -10,7 +10,7 @@ are still missing.
 
 | Setting | Example | Where it goes |
 |---|---|---|
-| Website for the link pages | `https://example.com/auth` | Supabase `site_url`, and the app's settings |
+| Website for the link pages | `https://you.github.io/myapp-pages` | Supabase `site_url`, the app's settings, and `web/settings.js` |
 | App's link name | `myapp` | The app's settings, and Supabase's allowed list |
 | Apple Team ID | `ABCDE12345` | The Universal Links file on the website |
 | App's bundle ID | `com.example.myapp` | The app's settings, and the Universal Links file |
@@ -19,7 +19,7 @@ are still missing.
 
 | # | What | Why | What breaks without it | OK to skip while testing? |
 |---|---|---|---|---|
-| 1 | **A website with two pages:** "Email confirmed" and "Set a new password" | Email links have to open somewhere until the app can open them, and afterward as a backup | Confirm and reset links lead nowhere | Yes: tests use a local address |
+| 1 | **The two web pages in `web/` online** (for example with GitHub Pages), with `settings.js` filled in | Email links have to open somewhere until the app can open them, and afterward as a backup | Confirm and reset links lead nowhere | Yes: tests use a local address |
 | 2 | **That website on Supabase's allowed list** | Supabase only sends people to addresses on the list (requirement 13) | Links are refused | Yes |
 | 3 | **An email sender connected to Supabase** (for example Resend) | Supabase's built-in sender is for testing: a few emails an hour, and it can't be relied on | Confirm and reset emails stop arriving | Yes |
 | 4 | **The rate limits checked on the real project** | The local test Supabase turns them off, so they've never been proven (audit concern A) | Guessing attacks and email flooding go unchecked | Yes, but must be done before launch |

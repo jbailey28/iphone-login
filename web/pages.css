@@ -1,0 +1,89 @@
+/* The same look as the sign-in pages in ui/theme.ts: every gap comes from one
+   8-pixel base. */
+:root {
+  --s: 8px;
+  --m: 16px;
+  --l: 24px;
+  --xl: 32px;
+  --radius: 12px;
+  --control: 48px;
+  --background: #ffffff;
+  --text: #111114;
+  --muted: #6b6b73;
+  --box: #f4f4f6;
+  --action: #111114;
+  --action-text: #ffffff;
+  --danger: #c7302a;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font: 17px/1.4 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+}
+
+main {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: calc(var(--xl) * 2) var(--l);
+}
+
+.app-name { margin: 0 0 var(--l); text-align: center; color: var(--muted); font-size: 15px; }
+.app-name:empty { display: none; }
+
+h1 { margin: 0 0 var(--l); font-size: 28px; line-height: 1.2; text-align: center; }
+
+p { margin: 0; text-align: center; }
+
+.field { position: relative; }
+
+input {
+  width: 100%;
+  height: var(--control);
+  padding: 0 64px 0 var(--m);
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--box);
+  color: var(--text);
+  font: inherit;
+}
+
+.show {
+  position: absolute;
+  top: 0;
+  right: var(--s);
+  height: var(--control);
+  padding: 0 var(--s);
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hint { margin: var(--s) 0 var(--m); color: var(--muted); font-size: 15px; text-align: left; }
+
+.problem { margin: 0 0 var(--m); color: var(--danger); font-size: 15px; text-align: left; }
+.problem:empty { display: none; }
+
+button[type="submit"] {
+  width: 100%;
+  height: var(--control);
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--action);
+  color: var(--action-text);
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button[type="submit"]:disabled { background: var(--muted); cursor: default; }
+
+[hidden] { display: none !important; }

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src https://*.supabase.co; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Confirm your email</title>
+  <link rel="stylesheet" href="../pages.css">
+  <script src="../supabase.js"></script>
+  <script type="module" src="../start.js"></script>
+</head>
+<body data-page="confirm">
+  <main>
+    <p class="app-name" data-app-name></p>
+
+    <section data-state="checking">
+      <h1>Confirming your email…</h1>
+    </section>
+
+    <section data-state="done" hidden>
+      <h1>Email confirmed</h1>
+      <p data-message></p>
+    </section>
+
+    <section data-state="failed" hidden>
+      <h1>That link didn't work</h1>
+      <p data-message></p>
+    </section>
+  </main>
+</body>
+</html>

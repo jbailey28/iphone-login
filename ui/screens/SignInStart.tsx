@@ -6,6 +6,7 @@ import { OrLine } from '../parts/OrLine';
 import { ProviderButton } from '../parts/ProviderButton';
 import { NOT_CONNECTED, type Logins } from '../logins';
 import { theme } from '../theme';
+import { MESSAGES, looksLikeEmail } from '../../src/emailLogin';
 
 /**
  * Page 1, as redesigned 2026-11-08: "Sign in with",
@@ -27,6 +28,12 @@ export function SignInStart({
   const { apple, google } = logins;
   const [email, setEmail] = useState('');
   const [note, setNote] = useState<string | null>(null);
+
+  function continueWithEmail() {
+    if (!email.trim()) return;
+    if (!looksLikeEmail(email)) return setNote(MESSAGES.badEmail);
+    onContinue(email.trim());
+  }
 
   async function continueWithApple() {
     if (!apple) return setNote(NOT_CONNECTED);
@@ -68,9 +75,9 @@ export function SignInStart({
           autoComplete="email"
           textContentType="emailAddress"
           returnKeyType="next"
-          onSubmitEditing={() => email.trim() && onContinue(email.trim())}
+          onSubmitEditing={continueWithEmail}
         />
-        <Button label="Continue" onPress={() => onContinue(email.trim())} disabled={!email.trim()} />
+        <Button label="Continue" onPress={continueWithEmail} disabled={!email.trim()} />
       </View>
 
       {note && <Text style={styles.note}>{note}</Text>}

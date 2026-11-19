@@ -6,6 +6,7 @@ import { OrLine } from '../parts/OrLine';
 import { ProviderButton } from '../parts/ProviderButton';
 import { NOT_CONNECTED, type Logins } from '../logins';
 import { theme } from '../theme';
+import { MESSAGES, looksLikeEmail } from '../../src/emailLogin';
 
 /**
  * Create an Account, as designed 2026-11-09: mirrors page 1 (Google and Apple
@@ -32,6 +33,7 @@ export function CreateAccount({ logins, onBack, onSent }: { logins: Logins; onBa
   }
 
   async function create() {
+    if (!looksLikeEmail(email)) return setNote(MESSAGES.badEmail);
     if (!emailLogin) return setNote(NOT_CONNECTED);
     setBusy(true);
     const r = await emailLogin.createAccount(email.trim(), password);

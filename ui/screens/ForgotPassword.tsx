@@ -4,6 +4,7 @@ import { Button } from '../parts/Button';
 import { Field } from '../parts/Field';
 import { NOT_CONNECTED, type Logins } from '../logins';
 import { theme } from '../theme';
+import { MESSAGES, looksLikeEmail } from '../../src/emailLogin';
 
 /** Reset your password, as designed 2026-11-09: the email is already filled in and can be changed. */
 export function ForgotPassword({
@@ -23,6 +24,7 @@ export function ForgotPassword({
   const [busy, setBusy] = useState(false);
 
   async function send() {
+    if (!looksLikeEmail(email)) return setNote(MESSAGES.badEmail);
     if (!emailLogin) return setNote(NOT_CONNECTED);
     setBusy(true);
     const r = await emailLogin.requestPasswordReset(email.trim());

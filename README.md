@@ -45,6 +45,8 @@ It comes with:
 
 - **The four emails** your users get: confirm your email, reset your password,
   your password was changed, and your email was changed.
+- **Two web pages the email links open:** "Email confirmed" and "Choose a new
+  password." You put them online for free with GitHub Pages.
 - **The code that connects it all to Supabase.** If you haven't used Supabase
   before, it's an online service that stores your users' accounts. Its free
   plan lets you have up to two projects.
@@ -55,10 +57,8 @@ It comes with:
 It doesn't include:
 
 - **The rest of your app.** After someone logs in, your app shows its own pages.
-- **The two web pages the email links open.** You make those on your own
-  website. See "What you need" below.
 
-> **Status:** It passes all of its automatic tests and the separate security
+> It passes all of its automatic tests and the separate security
 > test. It hasn't been tried yet on a real iPhone or with a real Supabase
 > account. `GOING-LIVE.md` lists what to check before real people use it.
 
@@ -70,7 +70,8 @@ makes my own projects easier. Here's what you do need.
 **To try it out**
 
 If you did my setup walkthrough (jessykabailey.com/my-setup/), you already
-have Claude Code and Homebrew. The one new thing to install is Node.
+have Claude Code, Homebrew and a GitHub account. The one new thing to install
+is Node.
 
 | What | Why | Cost |
 |---|---|---|
@@ -80,12 +81,12 @@ have Claude Code and Homebrew. The one new thing to install is Node.
 | **Expo** | Expo is a free set of tools for making iPhone apps. You build the app on your computer, and Expo lets you try it on your phone while you work. iPhone Login is built for apps made with Expo. If you don't have an app yet, Claude Code can make one for you. | Free |
 | **A Supabase account** | Supabase stores your users' accounts. | Free plan works |
 | **The Expo Go app on your iPhone** | It lets you try your app on your phone while you build it. | Free, from the App Store |
+| **A GitHub account** | The two web pages go online with GitHub Pages. You made your account in the setup walkthrough. | Free |
 
 **Before real people use it**
 
 | What | Why | Cost |
 |---|---|---|
-| **Your own website**, with two pages: "Email confirmed" and "Set a new password" | The links in the emails open these pages. | A web address costs about $10–20 a year |
 | **An email sending service**, for example Resend | Supabase's own email only sends a few emails an hour. It's only for testing. | Free for small apps |
 | **An Apple Developer account** | You need it to put your app in the App Store, and to use Continue with Apple for real. | $99 a year |
 | **A Google Cloud account** | Continue with Google needs a sign-in key from Google. | Free |
@@ -156,7 +157,27 @@ find them:
 
 Paste them into Claude Code when it asks.
 
-### Step 6: Set the rules in Supabase
+### Step 6: Put the two web pages online
+
+The links in your users' emails open two web pages: "Email confirmed" and
+"Choose a new password." iPhone Login comes with both. In Claude Code, send:
+
+```
+Put iPhone Login's two web pages online with GitHub Pages. Use my Supabase
+project's address and publishable key, then set the two page addresses as
+the confirm and reset addresses in my app.
+```
+
+Claude makes a new GitHub repository for the pages, turns on GitHub Pages, and
+gives you the two addresses. They look like this:
+
+- `https://yourname.github.io/myapp-pages/auth/confirm`
+- `https://yourname.github.io/myapp-pages/auth/reset`
+
+Keep them handy for the next step. The pages are public, and that's fine: they
+hold nothing secret.
+
+### Step 7: Set the rules in Supabase
 
 These settings are the rules for your users' accounts. They live in Supabase,
 so nobody can get around them by skipping your app.
@@ -197,11 +218,11 @@ at the bottom when you're done.
 
 **URL Configuration**
 
-- Site URL: your website's address, for example `https://your-site.com`
+- Site URL: your pages' address, for example `https://yourname.github.io/myapp-pages`
 - Redirect URLs: these are the addresses Supabase is allowed to send people to.
   Click **Add URL** and add all three:
-  - `https://your-site.com/auth/confirm`
-  - `https://your-site.com/auth/reset`
+  - your "confirm" page address from Step 6
+  - your "reset" page address from Step 6
   - your app's address for Google sign-in. Claude will tell you what it is.
 
 This is how it looks before you add anything:
@@ -232,12 +253,15 @@ do the same:
 | Email address changed | Your email address was changed | `email_changed.html` |
 
 Use these files, not the emails Supabase starts with. The links in these files
-are made to open your app's pages.
+are made to open your two web pages.
 
-### Step 7: Try it on your phone
+### Step 8: Try it on your phone
 
 Ask Claude Code to start your app, and scan the QR code again. You'll see the
 sign-in pages in your app.
+
+Then create an account with your own email address. Tap the link in the email
+you get, and the "Email confirmed" page opens. Go back to the app and log in.
 
 ### Before real people use it
 
@@ -246,7 +270,6 @@ sign-in pages in your app.
   Google before you can turn it on. Ask Claude to walk you through it.
 - **Your email sending service.** Connect it under **Emails → SMTP Settings**
   in Supabase.
-- **The two web pages** on your website that the email links open.
 
 `GOING-LIVE.md` has the full list.
 
@@ -281,8 +304,8 @@ or change its code.
    const supabase = createPhoneClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, createChunkedStorage(SecureStore));
 
    const email = createEmailLogin(supabase, {
-     confirmUrl: 'https://your-site.com/auth/confirm',
-     resetUrl: 'https://your-site.com/auth/reset',
+     confirmUrl: 'https://yourname.github.io/myapp-pages/auth/confirm',
+     resetUrl: 'https://yourname.github.io/myapp-pages/auth/reset',
    });
    const apple = createAppleLogin(supabase, {
      randomNonce: () => Crypto.randomUUID(),
@@ -317,13 +340,32 @@ or change its code.
      );
    }
    ```
-4. Set up Supabase as in Step 6 above. `supabase/config.toml` holds the same
+4. Set up Supabase as in Step 7 above. `supabase/config.toml` holds the same
    settings for a local Supabase.
+
+### Putting the web pages online
+
+The two pages are plain HTML and JavaScript in `web/`, with no build step.
+
+1. Copy everything in `web/` into a new public repository (GitHub Pages is free
+   for public repositories), keeping the layout: `auth/confirm.html` and
+   `auth/reset.html` sit in `auth/`, the other files next to `auth/`.
+2. In `settings.js`, fill in `APP_NAME`, `SUPABASE_URL` (must be `https://`)
+   and `SUPABASE_PUBLISHABLE_KEY`. Never the secret key.
+3. Turn on GitHub Pages for the repository, from the `main` branch and the root
+   folder.
+4. The pages are then at `https://OWNER.github.io/REPO/auth/confirm` and
+   `https://OWNER.github.io/REPO/auth/reset` (GitHub Pages serves `.html` files
+   without the extension). Use these as `confirmUrl` and `resetUrl` in the app,
+   and add both to Supabase's Redirect URLs.
+5. Don't change `pages.js`, `start.js` or `supabase.js`. `supabase.js` is
+   Supabase's own browser build (version 2.118.0), copied unchanged so the
+   pages load nothing from other sites.
 
 ### How the email links open
 
-For now, the links in the emails open two pages on your website. Once the app
-has an Apple Developer account, the same links can open the app directly
+For now, the links in the emails open the two web pages. Once the app has an
+Apple Developer account, the same links can open the app directly
 (Apple calls this Universal Links). `GOING-LIVE.md` lists what that needs.
 
 ### What's in the folder
@@ -339,9 +381,11 @@ has an Apple Developer account, the same links can open the app directly
 - `src/secureStorage.ts`: keeps the login in the iPhone's secure storage (the
   Keychain), split into pieces small enough to fit.
 - `ui/`: the sign-in pages, and `LoginFlow`, which shows them in order.
+- `web/`: the two web pages the email links open, for GitHub Pages.
 - `supabase/config.toml` and `supabase/templates/`: the Supabase settings and
   the emails.
-- `tests/`: the builder's tests. `tests/ui/` clicks through the pages.
+- `tests/`: the builder's tests. `tests/ui/` clicks through the sign-in pages,
+  and `tests/web/` runs the two web pages.
 - `.devcontainer/`: the setup for running the tests in a GitHub codespace.
 
 ### Running the tests

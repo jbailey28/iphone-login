@@ -9,12 +9,14 @@
     "types": [
       "node"
     ],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "allowJs": true
   },
   "include": [
     "src",
     "ui",
     "tests",
+    "web",
     "vitest.config.ts"
   ]
 }

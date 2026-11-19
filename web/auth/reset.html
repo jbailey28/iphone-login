@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src https://*.supabase.co; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <title>Reset your password</title>
+  <link rel="stylesheet" href="../pages.css">
+  <script src="../supabase.js"></script>
+  <script type="module" src="../start.js"></script>
+</head>
+<body data-page="reset">
+  <main>
+    <p class="app-name" data-app-name></p>
+
+    <section data-state="checking">
+      <h1>Checking your link…</h1>
+    </section>
+
+    <section data-state="choose" hidden>
+      <h1>Choose a new password</h1>
+      <form method="post" novalidate>
+        <div class="field">
+          <input type="password" name="password" placeholder="New password" autocomplete="new-password" aria-label="New password">
+          <button type="button" class="show" data-show>Show</button>
+        </div>
+        <p class="hint">At least 10 characters, including an uppercase letter, a lowercase letter, a number, and a special character.</p>
+        <p class="problem" data-problem role="alert"></p>
+        <button type="submit" disabled>Save password</button>
+      </form>
+    </section>
+
+    <section data-state="done" hidden>
+      <h1>Password changed</h1>
+      <p data-message></p>
+    </section>
+
+    <section data-state="failed" hidden>
+      <h1>That link didn't work</h1>
+      <p data-message></p>
+    </section>
+  </main>
+</body>
+</html>

@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { LoginFlow } from '../../ui/LoginFlow';
 import { NOT_CONNECTED, type Logins } from '../../ui/logins';
-import { MESSAGES } from '../../src/emailLogin';
+import { MESSAGES, looksLikeEmail } from '../../src/emailLogin';
 import { APPLE_MESSAGES } from '../../src/appleLogin';
 
 /**
@@ -73,6 +73,15 @@ describe('page 1', () => {
     const { logins } = fakeLogins();
     render(<LoginFlow supabase={null} logins={logins} />);
     press('Continue');
+    expect(screen.queryByLabelText('Password')).toBeNull();
+  });
+
+  it('an address without a full domain stays on page 1 with a message', () => {
+    const { logins } = fakeLogins();
+    render(<LoginFlow supabase={null} logins={logins} />);
+    type('Email address', 'xyz@gmail');
+    press('Continue');
+    expect(screen.getByText(MESSAGES.badEmail)).toBeTruthy();
     expect(screen.queryByLabelText('Password')).toBeNull();
   });
 
@@ -175,9 +184,32 @@ describe('forgot password', () => {
     await screen.findByText(MESSAGES.resetSent);
     expect(email.requestPasswordReset).toHaveBeenCalledWith('other@example.com');
   });
+
+  it('does not send a link to an address without a full domain', () => {
+    const { logins, email } = fakeLogins();
+    render(<LoginFlow supabase={null} logins={logins} />);
+    type('Email address', 'sam@example.com');
+    press('Continue');
+    press('Forgot password?');
+    type('Email address', 'sam@example');
+    press('Send reset link');
+    expect(screen.getByText(MESSAGES.badEmail)).toBeTruthy();
+    expect(email.requestPasswordReset).not.toHaveBeenCalled();
+  });
 });
 
 describe('create an account', () => {
+  it('does not create an account for an address without a full domain', () => {
+    const { logins, email } = fakeLogins();
+    render(<LoginFlow supabase={null} logins={logins} />);
+    press('Create an Account');
+    type('Email address', 'xyz@gmail');
+    type('Password', 'Abcdefgh1!');
+    press('Create Account');
+    expect(screen.getByText(MESSAGES.badEmail)).toBeTruthy();
+    expect(email.createAccount).not.toHaveBeenCalled();
+  });
+
   it('mirrors page 1, shows the password rules, and sends the confirm link', async () => {
     const { logins, email } = fakeLogins();
     render(<LoginFlow supabase={null} logins={logins} />);
@@ -267,5 +299,16 @@ describe('logged in', () => {
     expect(email.signOut).toHaveBeenCalled();
     supabase.emit(null);
     expect(await screen.findByText('Sign in with')).toBeTruthy();
+  });
+});
+
+describe('looksLikeEmail', () => {
+  it('accepts full addresses', () => {
+    for (const a of ['sam@example.com', ' sam@example.com ', 'first.last+tag@mail.co.uk']) expect(looksLikeEmail(a)).toBe(true);
+  });
+
+  it('refuses addresses missing a part', () => {
+    for (const a of ['xyz@gmail', 'xyz@gmail.', 'xyz@gmail.c', 'xyz', '@gmail.com', 'xyz@.com', 'x y@gmail.com', 'a@b@gmail.com'])
+      expect(looksLikeEmail(a), a).toBe(false);
   });
 });

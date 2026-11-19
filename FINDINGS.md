@@ -157,3 +157,33 @@ shown able to fail. Nothing was left changed.
 Not covered: the built app bundle and git history (16), and analytics (20),
 since the component has none.
 
+
+## Trial 6 (2026-11-13, Opus 4.8): the two web pages
+
+Run in its own repo and codespace (`login-component-redteam-6`, branch
+`results`), with only the code, `web/` and the requirements. **Started with
+Fable 5.1, but Fable's safeguards refused at the start and Claude Code switched
+the whole run to Opus 4.8.** Opus 4.8 wrote every attack and the report.
+Decided 2026-11-14: keep these results rather than run it again. All 18 attack
+tests reproduced on GitHub Actions.
+
+| Requirement | Result |
+|---|---|
+| 5. No account use before the email is confirmed | **Held.** The confirm page turns the account on, and leaves no login behind |
+| 6. A reset link works once | **Held** |
+| 7. A reset link works only for its own email | **Held.** The page has no way to pick an account; the link alone decides |
+| 8. A reset link stops working after a set time | **Held** (aged in the database, not by waiting 15 minutes) |
+| 18. A new password logs out every device | **Held.** Supabase does this on any password change; the page also ends its own login |
+| The link's code doesn't linger | **Held.** Taken out of the address bar before anything else; no referrer |
+| No login saved in the browser | **Held** |
+| Can't be used inside another site | **Held**, with a limit (below) |
+| Loads nothing from other sites; password goes only to Supabase | **Held** |
+
+**Known limit found:**
+- **The only guard against another site showing the pages inside its own is
+  the pages' own script.** GitHub Pages can't send the header that would add a
+  second guard. The password box stays hidden until the script has checked, so
+  with scripts off nothing shows at all.
+
+Not covered: a real browser on a real GitHub Pages site (checked in jsdom and by
+reading the pages), and a link expiring after a real 15 minutes.
